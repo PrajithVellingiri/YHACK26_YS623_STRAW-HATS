@@ -5,7 +5,7 @@ import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { ShieldCheck, User, Shield, Settings } from 'lucide-react';
 
-import { signin } from '../services/api';
+import { signin, signup } from '../services/api';
 
 export const SignInPage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,10 +39,44 @@ export const SignInPage: React.FC = () => {
     }
   };
 
-  const demoLogin = (role: 'business' | 'officer' | 'admin') => {
-    if (role === 'business') navigate('/dashboard');
-    if (role === 'officer') navigate('/officer');
-    if (role === 'admin') navigate('/admin');
+  const demoLogin = async (roleType: 'business' | 'officer' | 'admin') => {
+    setIsLoading(true);
+    setError('');
+    
+    let creds = { email: '', password: '', name: '', role: '' };
+    let destination = '';
+    
+    if (roleType === 'business') {
+      creds = { email: 'business@demo.com', password: 'DemoBusiness123', name: 'Demo Business Owner', role: 'CITIZEN' };
+      destination = '/dashboard';
+    } else if (roleType === 'officer') {
+      creds = { email: 'officer@demo.com', password: 'DemoOfficer123', name: 'Demo Government Officer', role: 'OFFICER' };
+      destination = '/officer';
+    } else if (roleType === 'admin') {
+      creds = { email: 'admin@demo.com', password: 'DemoAdmin123', name: 'Demo System Admin', role: 'ADMIN' };
+      destination = '/admin';
+    }
+
+    try {
+      let response;
+      try {
+        response = await signin({ email: creds.email, password: creds.password });
+      } catch (signinErr: any) {
+        // If sign in fails (e.g., account doesn't exist), try to sign up
+        try {
+          response = await signup({ name: creds.name, email: creds.email, password: creds.password, role: creds.role });
+        } catch (signupErr: any) {
+          throw new Error('Failed to create demo account: ' + (signupErr.message || 'Unknown error'));
+        }
+      }
+      
+      localStorage.setItem('user', JSON.stringify(response));
+      navigate(destination);
+    } catch (err: any) {
+      setError(err.message || 'Demo login failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -113,13 +147,13 @@ export const SignInPage: React.FC = () => {
               </div>
 
               <div className="mt-6 grid grid-cols-1 gap-3">
-                <Button variant="outline" onClick={() => demoLogin('business')} className="w-full flex items-center justify-center gap-2">
+                <Button type="button" variant="outline" onClick={() => demoLogin('business')} disabled={isLoading} className="w-full flex items-center justify-center gap-2">
                   <User className="w-4 h-4 text-text-muted" /> Business Owner
                 </Button>
-                <Button variant="outline" onClick={() => demoLogin('officer')} className="w-full flex items-center justify-center gap-2">
+                <Button type="button" variant="outline" onClick={() => demoLogin('officer')} disabled={isLoading} className="w-full flex items-center justify-center gap-2">
                   <Shield className="w-4 h-4 text-[#00E5FF]" /> Government Officer
                 </Button>
-                <Button variant="outline" onClick={() => demoLogin('admin')} className="w-full flex items-center justify-center gap-2">
+                <Button type="button" variant="outline" onClick={() => demoLogin('admin')} disabled={isLoading} className="w-full flex items-center justify-center gap-2">
                   <Settings className="w-4 h-4 text-accent-yellow" /> System Admin
                 </Button>
               </div>
