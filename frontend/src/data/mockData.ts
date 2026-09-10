@@ -12,6 +12,7 @@ export const MOCK_BUSINESS = {
 export const MOCK_COMPLIANCES: ComplianceRequirement[] = [
   {
     id: "FSSAI",
+    compliance_id: 1,
     name: "FSSAI Registration",
     required: true,
     department: "Food Safety Department",
@@ -33,6 +34,7 @@ export const MOCK_COMPLIANCES: ComplianceRequirement[] = [
   },
   {
     id: "TRADE",
+    compliance_id: 2,
     name: "Trade Licence",
     required: true,
     department: "Local Authority",
@@ -54,6 +56,7 @@ export const MOCK_COMPLIANCES: ComplianceRequirement[] = [
   },
   {
     id: "GST",
+    compliance_id: 3,
     name: "GST Registration",
     required: false,
     department: "CBIC",
@@ -76,6 +79,7 @@ export const MOCK_COMPLIANCES: ComplianceRequirement[] = [
   },
   {
     id: "FIRE",
+    compliance_id: 4,
     name: "Fire Safety Compliance",
     required: true,
     department: "State Fire Service",
@@ -96,6 +100,7 @@ export const MOCK_COMPLIANCES: ComplianceRequirement[] = [
   },
   {
     id: "POLLUTION",
+    compliance_id: 5,
     name: "Pollution-related clearance",
     required: false,
     department: "State Pollution Control Board",
@@ -112,5 +117,20 @@ export const MOCK_COMPLIANCES: ComplianceRequirement[] = [
       "Inspection",
       "Approval"
     ]
+  }
+];
+
+export const MOCK_APPLICATIONS = [
+  {
+    application_id: 1,
+    business_name: "ABC Bakery",
+    compliance_name: "FSSAI Registration",
+    status: "SUBMITTED"
+  },
+  {
+    application_id: 2,
+    business_name: "XYZ Tech",
+    compliance_name: "GST Registration",
+    status: "UNDER_REVIEW"
   }
 ];
