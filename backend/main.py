@@ -3,9 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import business, compliance, applications, auth, officer, admin
 from database.database import engine, Base
 import os
+from seed import seed_demo_data
 
 # Ensure tables are created
 Base.metadata.create_all(bind=engine)
+
+# Seed demo data for hackathon
+seed_demo_data()
 
 app = FastAPI(title="Compliance Platform API")
 

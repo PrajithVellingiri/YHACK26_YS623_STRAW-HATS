@@ -3,9 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
-import { ShieldCheck, User, Shield, Settings } from 'lucide-react';
+import { ShieldCheck, Info } from 'lucide-react';
 
-import { signin, signup } from '../services/api';
+import { signin } from '../services/api';
 
 export const SignInPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +24,29 @@ export const SignInPage: React.FC = () => {
       // Store user info in localStorage for future use
       localStorage.setItem('user', JSON.stringify(response));
 
+      // Auto-populate local mock data for the Business Owner demo
+      if (email === 'business@demo.com' && !localStorage.getItem('businessProfile')) {
+        localStorage.setItem('businessProfile', JSON.stringify({
+          name: "Fresh Foods Cafe",
+          description: "A healthy food cafe",
+          sector: "Food",
+          state: "Tamil Nadu",
+          businessSize: "Small",
+          businessStage: "Starting"
+        }));
+        localStorage.setItem('compliances', JSON.stringify([
+          {
+            id: "comp_demo_1",
+            name: "Food Safety License (FSSAI)",
+            department: "Health",
+            requirement_type: "License",
+            description: "Mandatory license for food businesses",
+            required_documents: ["ID Proof", "Address Proof", "Food Safety Plan"],
+            status: "SUBMITTED"
+          }
+        ]));
+      }
+
       // Redirect based on role
       if (response.role === 'ADMIN') {
         navigate('/admin');
@@ -34,46 +57,6 @@ export const SignInPage: React.FC = () => {
       }
     } catch (err: any) {
       setError(err.message || 'Sign in failed');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const demoLogin = async (roleType: 'business' | 'officer' | 'admin') => {
-    setIsLoading(true);
-    setError('');
-    
-    let creds = { email: '', password: '', name: '', role: '' };
-    let destination = '';
-    
-    if (roleType === 'business') {
-      creds = { email: 'business@demo.com', password: 'DemoBusiness123', name: 'Demo Business Owner', role: 'CITIZEN' };
-      destination = '/dashboard';
-    } else if (roleType === 'officer') {
-      creds = { email: 'officer@demo.com', password: 'DemoOfficer123', name: 'Demo Government Officer', role: 'OFFICER' };
-      destination = '/officer';
-    } else if (roleType === 'admin') {
-      creds = { email: 'admin@demo.com', password: 'DemoAdmin123', name: 'Demo System Admin', role: 'ADMIN' };
-      destination = '/admin';
-    }
-
-    try {
-      let response;
-      try {
-        response = await signin({ email: creds.email, password: creds.password });
-      } catch (signinErr: any) {
-        // If sign in fails (e.g., account doesn't exist), try to sign up
-        try {
-          response = await signup({ name: creds.name, email: creds.email, password: creds.password, role: creds.role });
-        } catch (signupErr: any) {
-          throw new Error('Failed to create demo account: ' + (signupErr.message || 'Unknown error'));
-        }
-      }
-      
-      localStorage.setItem('user', JSON.stringify(response));
-      navigate(destination);
-    } catch (err: any) {
-      setError(err.message || 'Demo login failed');
     } finally {
       setIsLoading(false);
     }
@@ -142,20 +125,34 @@ export const SignInPage: React.FC = () => {
                   <div className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-card px-2 text-text-muted">Demo Role Selection</span>
+                  <span className="bg-card px-2 text-text-muted font-medium uppercase tracking-wider text-xs">Hackathon Demo Credentials</span>
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-1 gap-3">
-                <Button type="button" variant="outline" onClick={() => demoLogin('business')} disabled={isLoading} className="w-full flex items-center justify-center gap-2">
-                  <User className="w-4 h-4 text-text-muted" /> Business Owner
-                </Button>
-                <Button type="button" variant="outline" onClick={() => demoLogin('officer')} disabled={isLoading} className="w-full flex items-center justify-center gap-2">
-                  <Shield className="w-4 h-4 text-[#00E5FF]" /> Government Officer
-                </Button>
-                <Button type="button" variant="outline" onClick={() => demoLogin('admin')} disabled={isLoading} className="w-full flex items-center justify-center gap-2">
-                  <Settings className="w-4 h-4 text-accent-yellow" /> System Admin
-                </Button>
+              <div className="mt-6 space-y-4">
+                <div className="bg-gray-800 p-3 rounded-md text-xs border border-gray-700">
+                  <h4 className="font-bold text-gray-300 mb-1 flex items-center gap-1"><Info className="w-3 h-3"/> Business Owner</h4>
+                  <div className="grid grid-cols-[60px_1fr] gap-1 text-gray-400">
+                    <span className="font-semibold">Email:</span> <span>business@demo.com</span>
+                    <span className="font-semibold">Pass:</span> <span>DemoBusiness123</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800 p-3 rounded-md text-xs border border-gray-700">
+                  <h4 className="font-bold text-[#00E5FF] mb-1 flex items-center gap-1"><Info className="w-3 h-3"/> Government Officer</h4>
+                  <div className="grid grid-cols-[60px_1fr] gap-1 text-gray-400">
+                    <span className="font-semibold">Email:</span> <span>officer@demo.com</span>
+                    <span className="font-semibold">Pass:</span> <span>DemoOfficer123</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800 p-3 rounded-md text-xs border border-gray-700">
+                  <h4 className="font-bold text-accent-yellow mb-1 flex items-center gap-1"><Info className="w-3 h-3"/> System Admin</h4>
+                  <div className="grid grid-cols-[60px_1fr] gap-1 text-gray-400">
+                    <span className="font-semibold">Email:</span> <span>admin@demo.com</span>
+                    <span className="font-semibold">Pass:</span> <span>DemoAdmin123</span>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
