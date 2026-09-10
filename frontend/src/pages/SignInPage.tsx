@@ -37,11 +37,12 @@ export const SignInPage: React.FC = () => {
         localStorage.setItem('compliances', JSON.stringify([
           {
             id: "comp_demo_1",
+            compliance_id: 1,
             name: "Food Safety License (FSSAI)",
             department: "Health",
-            requirement_type: "License",
+            required: true,
             description: "Mandatory license for food businesses",
-            required_documents: ["ID Proof", "Address Proof", "Food Safety Plan"],
+            documents: ["ID Proof", "Address Proof", "Food Safety Plan"],
             status: "SUBMITTED"
           }
         ]));

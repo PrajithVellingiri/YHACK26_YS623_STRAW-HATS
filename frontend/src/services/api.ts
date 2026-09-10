@@ -1,18 +1,24 @@
-import {
-  AnalyzeBusinessRequest,
-  AnalyzeBusinessResponse,
-  ApplicationStatus,
-  BusinessProfile,
-  ComplianceRequirement,
-  ApplicationRecord
-} from "../types";
+import { BusinessProfile, ComplianceRequirement, AnalyzeBusinessRequest, AnalyzeBusinessResponse, ApplicationStatus } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+
+const handleResponse = async (response: Response, defaultErrorMsg: string) => {
+  if (!response.ok) {
+    let errText = defaultErrorMsg;
+    try {
+      const errorData = await response.json();
+      errText = errorData.detail || errorData.message || defaultErrorMsg;
+    } catch {
+      errText = "Server returned " + response.status + " error";
+    }
+    throw new Error(errText);
+  }
+  return response.json();
+};
 
 export const analyzeBusiness = async (
   request: AnalyzeBusinessRequest
 ): Promise<AnalyzeBusinessResponse> => {
-  // Step 1: Analyze business
   const analyzeRes = await fetch(`${API_BASE_URL}/business/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -25,10 +31,9 @@ export const analyzeBusiness = async (
       business_stage: request.businessStage
     }),
   });
-  if (!analyzeRes.ok) throw new Error("Failed to analyze business");
-  const businessData = await analyzeRes.json();
+  
+  const businessData = await handleResponse(analyzeRes, "Failed to analyze business");
 
-  // Step 2: Generate compliance checklist
   const generateRes = await fetch(`${API_BASE_URL}/compliance/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -40,8 +45,8 @@ export const analyzeBusiness = async (
       business_stage: businessData.business_stage
     }),
   });
-  if (!generateRes.ok) throw new Error("Failed to generate compliance");
-  const complianceData = await generateRes.json();
+  
+  const complianceData = await handleResponse(generateRes, "Failed to generate compliance requirements");
 
   const mappedBusiness: BusinessProfile = {
     name: businessData.business_name,
@@ -93,8 +98,8 @@ export const getGuidance = async (complianceIdStr: string): Promise<string> => {
       compliance_id: compliance.compliance_id
     }),
   });
-  if (!response.ok) throw new Error("Failed to get guidance");
-  const data = await response.json();
+  
+  const data = await handleResponse(response, "Failed to get guidance");
   return data.guidance;
 };
 
@@ -104,10 +109,11 @@ export const updateApplicationStatus = async (
 ): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/applications/${applicationId}/status`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ status }),
   });
-  if (!response.ok) throw new Error("Failed to update status");
+  
+  await handleResponse(response, "Failed to update status");
 };
 
 // --- AUTH HELPER ---
@@ -131,20 +137,20 @@ const getAuthHeaders = (): Record<string, string> => {
 
 // --- OFFICER APIS ---
 
-export const getOfficerApplications = async (): Promise<ApplicationRecord[]> => {
+export const getOfficerApplications = async (): Promise<any[]> => {
   const response = await fetch(`${API_BASE_URL}/officer/applications`, {
     headers: getAuthHeaders()
   });
-  if (!response.ok) throw new Error("Failed to fetch officer applications");
-  const data = await response.json();
+  
+  const data = await handleResponse(response, "Failed to fetch officer applications");
   return data.map((d: any) => ({
     id: String(d.application_id),
     businessId: "N/A",
     businessName: d.business_name,
-    complianceId: "N/A",
+    complianceId: String(d.compliance_id),
     complianceName: d.compliance_name,
     status: d.status,
-    submittedAt: new Date().toISOString()
+    submittedAt: d.submitted_at
   }));
 };
 
@@ -152,8 +158,8 @@ export const getOfficerApplicationDetails = async (applicationId: string): Promi
   const response = await fetch(`${API_BASE_URL}/officer/applications/${applicationId}`, {
     headers: getAuthHeaders()
   });
-  if (!response.ok) throw new Error("Failed to fetch application details");
-  return response.json();
+  
+  return handleResponse(response, "Failed to fetch application details");
 };
 
 export const updateOfficerApplicationStatus = async (
@@ -165,7 +171,8 @@ export const updateOfficerApplicationStatus = async (
     headers: getAuthHeaders(),
     body: JSON.stringify({ status }),
   });
-  if (!response.ok) throw new Error("Failed to update officer application status");
+  
+  await handleResponse(response, "Failed to update officer application status");
 };
 
 // --- ADMIN APIS ---
@@ -174,16 +181,14 @@ export const getAdminStats = async (): Promise<any> => {
   const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
     headers: getAuthHeaders()
   });
-  if (!response.ok) throw new Error("Failed to fetch admin stats");
-  return response.json();
+  return handleResponse(response, "Failed to fetch admin stats");
 };
 
 export const getAdminCompliances = async (): Promise<any> => {
   const response = await fetch(`${API_BASE_URL}/admin/compliances`, {
     headers: getAuthHeaders()
   });
-  if (!response.ok) throw new Error("Failed to fetch admin compliances");
-  return response.json();
+  return handleResponse(response, "Failed to fetch admin compliances");
 };
 
 export const createAdminCompliance = async (data: any): Promise<any> => {
@@ -192,8 +197,7 @@ export const createAdminCompliance = async (data: any): Promise<any> => {
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
-  if (!response.ok) throw new Error("Failed to create compliance");
-  return response.json();
+  return handleResponse(response, "Failed to create compliance");
 };
 
 export const updateAdminCompliance = async (id: number, data: any): Promise<any> => {
@@ -202,8 +206,7 @@ export const updateAdminCompliance = async (id: number, data: any): Promise<any>
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
-  if (!response.ok) throw new Error("Failed to update compliance");
-  return response.json();
+  return handleResponse(response, "Failed to update compliance");
 };
 
 export const deleteAdminCompliance = async (id: number): Promise<void> => {
@@ -211,7 +214,15 @@ export const deleteAdminCompliance = async (id: number): Promise<void> => {
     method: "DELETE",
     headers: getAuthHeaders()
   });
-  if (!response.ok) throw new Error("Failed to delete compliance");
+  
+  if (!response.ok) {
+    let errText = "Failed to delete compliance";
+    try {
+      const errorData = await response.json();
+      errText = errorData.detail || errText;
+    } catch {}
+    throw new Error(errText);
+  }
 };
 
 // --- AUTH APIS ---
@@ -222,11 +233,7 @@ export const signin = async (credentials: any) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
   });
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "Sign in failed");
-  }
-  return response.json();
+  return handleResponse(response, "Sign in failed");
 };
 
 export const signup = async (userData: any) => {
@@ -235,9 +242,5 @@ export const signup = async (userData: any) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
   });
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "Sign up failed");
-  }
-  return response.json();
+  return handleResponse(response, "Sign up failed");
 };
