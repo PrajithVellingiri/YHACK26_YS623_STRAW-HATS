@@ -114,3 +114,26 @@ export const MOCK_COMPLIANCES: ComplianceRequirement[] = [
     ]
   }
 ];
+
+import { ApplicationRecord } from "../types";
+
+export const MOCK_APPLICATIONS: ApplicationRecord[] = [
+  {
+    id: "101",
+    businessId: "1",
+    businessName: "ABC Bakery",
+    complianceId: "FSSAI",
+    complianceName: "FSSAI Registration",
+    status: "SUBMITTED",
+    submittedAt: "2023-10-24T10:00:00Z"
+  },
+  {
+    id: "102",
+    businessId: "2",
+    businessName: "XYZ Store",
+    complianceId: "GST",
+    complianceName: "GST Registration",
+    status: "UNDER_REVIEW",
+    submittedAt: "2023-10-23T14:30:00Z"
+  }
+];

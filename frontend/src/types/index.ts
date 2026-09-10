@@ -37,3 +37,27 @@ export interface AnalyzeBusinessResponse {
   business: BusinessProfile;
   compliances: ComplianceRequirement[];
 }
+
+export interface ApplicationRecord {
+  id: string;
+  businessId: string;
+  businessName: string;
+  complianceId: string;
+  complianceName: string;
+  status: ApplicationStatus;
+  submittedAt: string;
+}
+
+export interface AdminStats {
+  totalBusinesses: number;
+  totalApplications: number;
+  totalCompliances: number;
+  statusDistribution: Record<ApplicationStatus, number>;
+}
+
+export interface OfficerStats {
+  totalApplications: number;
+  pendingReview: number;
+  underReview: number;
+  approved: number;
+}

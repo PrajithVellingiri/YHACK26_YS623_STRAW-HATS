@@ -4,6 +4,6 @@
 
 @layer base {
   body {
-    @apply text-gray-900 bg-gray-50;
+    @apply text-text-main bg-background antialiased selection:bg-accent-yellow selection:text-black;
   }
 }

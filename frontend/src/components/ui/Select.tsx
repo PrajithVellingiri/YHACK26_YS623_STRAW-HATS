@@ -11,17 +11,17 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-text-muted mb-1">
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && <span className="text-accent-yellow ml-1">*</span>}
           </label>
         )}
         <select
           ref={ref}
           className={`
-            w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm shadow-sm
-            focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500
-            disabled:bg-gray-50 disabled:text-gray-500
+            w-full px-3 py-2 bg-[#1A1A1A] border border-border rounded-xl text-sm shadow-sm text-text-main
+            focus:outline-none focus:border-accent-green focus:ring-1 focus:ring-accent-green transition-colors
+            disabled:bg-[#111] disabled:text-[#555]
             ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
             ${className}
           `}

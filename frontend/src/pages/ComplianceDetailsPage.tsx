@@ -43,7 +43,7 @@ export const ComplianceDetailsPage: React.FC = () => {
   if (!compliance) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Compliance not found</h2>
+        <h2 className="text-2xl font-bold text-text-main mb-2">Compliance not found</h2>
         <Link to="/dashboard">
           <Button>Return to Dashboard</Button>
         </Link>
@@ -54,21 +54,21 @@ export const ComplianceDetailsPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-6">
+        <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-text-muted hover:text-text-main mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </Link>
         
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">{compliance.name}</h1>
+              <h1 className="text-3xl font-bold text-text-main">{compliance.name}</h1>
               {compliance.required ? (
                 <Badge variant="red">Mandatory</Badge>
               ) : (
                 <Badge variant="blue">Applicable</Badge>
               )}
             </div>
-            <p className="text-xl text-gray-600">{compliance.description}</p>
+            <p className="text-xl text-text-muted">{compliance.description}</p>
           </div>
           <div className="flex-shrink-0">
             <StatusBadge status={compliance.status} className="text-sm px-3 py-1.5" />
@@ -81,24 +81,24 @@ export const ComplianceDetailsPage: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-gray-400" />
+                <BookOpen className="w-5 h-5 text-text-muted" />
                 Why do you need this?
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-text-main leading-relaxed mb-6">
                 {compliance.whyNeeded}
               </p>
 
               {!aiGuidance && !isGuidanceLoading && !guidanceError && (
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
+                <div className="bg-[#111] border border-border rounded-xl p-5 shadow-[0_0_15px_rgba(174,255,0,0.05)]">
                   <div className="flex items-start gap-4">
-                    <div className="bg-blue-100 p-2 rounded-lg text-blue-600">
+                    <div className="bg-[#1A1A1A] p-2 rounded-lg text-accent-green border border-border shadow-[0_0_10px_rgba(174,255,0,0.1)]">
                       <Sparkles className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-blue-900 mb-1">Confused about this requirement?</h4>
-                      <p className="text-blue-800 text-sm mb-3">
+                      <h4 className="font-semibold text-text-main mb-1">Confused about this requirement?</h4>
+                      <p className="text-text-muted text-sm mb-3">
                         Our AI can explain exactly why this applies to your specific business and what it means for you in simple terms.
                       </p>
                       <Button onClick={handleGetGuidance} variant="primary" size="sm">
@@ -110,29 +110,29 @@ export const ComplianceDetailsPage: React.FC = () => {
               )}
 
               {isGuidanceLoading && (
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 text-center">
-                  <Sparkles className="w-6 h-6 text-blue-600 animate-spin mx-auto mb-3" />
-                  <p className="text-blue-900 font-medium">Preparing a simple explanation...</p>
+                <div className="bg-[#111] border border-border rounded-xl p-6 text-center">
+                  <Sparkles className="w-6 h-6 text-accent-green animate-spin mx-auto mb-3" />
+                  <p className="text-text-main font-medium">Preparing a simple explanation...</p>
                 </div>
               )}
 
               {guidanceError && (
-                <div className="bg-red-50 border border-red-100 rounded-xl p-5 flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div className="bg-[#1A0A0A] border border-[#331111] rounded-xl p-5 flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-[#FF5500] flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-red-800 text-sm mb-2">{guidanceError}</p>
+                    <p className="text-[#FF5500] text-sm mb-2">{guidanceError}</p>
                     <Button onClick={handleGetGuidance} variant="outline" size="sm">Retry</Button>
                   </div>
                 </div>
               )}
 
               {aiGuidance && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-blue-200 text-blue-800 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
+                <div className="bg-[#111] border border-accent-green/30 rounded-xl p-6 relative overflow-hidden shadow-[0_0_20px_rgba(174,255,0,0.05)]">
+                  <div className="absolute top-0 right-0 bg-[#1A1A1A] text-accent-green border-b border-l border-accent-green/30 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
                     <Sparkles className="w-3 h-3" /> AI Guidance
                   </div>
                   <div className="flex items-start gap-3 mt-2">
-                    <p className="text-blue-900 leading-relaxed text-sm whitespace-pre-wrap">
+                    <p className="text-gray-300 leading-relaxed text-sm whitespace-pre-wrap">
                       {aiGuidance}
                     </p>
                   </div>
@@ -150,20 +150,20 @@ export const ComplianceDetailsPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               {compliance.steps && compliance.steps.length > 0 ? (
-                <ol className="relative border-l-2 border-gray-200 ml-3 space-y-6">
+                <ol className="relative border-l-2 border-border ml-3 space-y-6">
                   {compliance.steps.map((step, index) => (
                     <li key={index} className="ml-6">
-                      <span className="absolute flex items-center justify-center w-8 h-8 bg-white border-2 border-blue-600 rounded-full -left-4 ring-4 ring-white text-blue-600 font-bold text-sm">
+                      <span className="absolute flex items-center justify-center w-8 h-8 bg-[#1A1A1A] border-2 border-accent-green rounded-full -left-4 ring-4 ring-background text-accent-green font-bold text-sm shadow-[0_0_10px_rgba(174,255,0,0.3)]">
                         {index + 1}
                       </span>
-                      <div className="pt-1 text-gray-700">
+                      <div className="pt-1 text-text-main">
                         {step}
                       </div>
                     </li>
                   ))}
                 </ol>
               ) : (
-                <p className="text-gray-500 italic">No specific steps available.</p>
+                <p className="text-text-muted italic">No specific steps available.</p>
               )}
             </CardContent>
           </Card>

@@ -69,3 +69,66 @@ export const updateApplicationStatus = async (
   });
   if (!response.ok) throw new Error("Failed to update status");
 };
+
+// --- OFFICER APIS ---
+
+export const getOfficerApplications = async (): Promise<any> => {
+  if (USE_MOCK) {
+    await delay(1000);
+    // Dynamically require to avoid circular deps if any
+    const { MOCK_APPLICATIONS } = await import("../data/mockData");
+    return MOCK_APPLICATIONS;
+  }
+  const response = await fetch(`${API_BASE_URL}/officer/applications`);
+  if (!response.ok) throw new Error("Failed to fetch applications");
+  return response.json();
+};
+
+export const updateOfficerApplicationStatus = async (
+  applicationId: string,
+  status: ApplicationStatus
+): Promise<void> => {
+  if (USE_MOCK) {
+    await delay(1000);
+    return;
+  }
+  const response = await fetch(`${API_BASE_URL}/officer/applications/${applicationId}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+  if (!response.ok) throw new Error("Failed to update status");
+};
+
+// --- ADMIN APIS ---
+
+export const getAdminStats = async (): Promise<any> => {
+  if (USE_MOCK) {
+    await delay(1000);
+    return {
+      totalBusinesses: 120,
+      totalApplications: 345,
+      totalCompliances: 15,
+      statusDistribution: {
+        NOT_STARTED: 50,
+        SUBMITTED: 100,
+        UNDER_REVIEW: 75,
+        APPROVED: 120,
+      }
+    };
+  }
+  const response = await fetch(`${API_BASE_URL}/admin/stats`);
+  if (!response.ok) throw new Error("Failed to fetch stats");
+  return response.json();
+};
+
+export const getAdminCompliances = async (): Promise<any> => {
+  if (USE_MOCK) {
+    await delay(1000);
+    const { MOCK_COMPLIANCES } = await import("../data/mockData");
+    return MOCK_COMPLIANCES;
+  }
+  const response = await fetch(`${API_BASE_URL}/admin/compliances`);
+  if (!response.ok) throw new Error("Failed to fetch compliances");
+  return response.json();
+};
