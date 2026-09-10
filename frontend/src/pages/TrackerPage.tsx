@@ -34,9 +34,9 @@ export const TrackerPage: React.FC = () => {
       setFeedbackMsg({ id, msg: 'Application status updated successfully.' });
       setTimeout(() => setFeedbackMsg(null), 3000);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update status', error);
-      alert('Failed to update status. Please try again.');
+      alert(`Failed to update status: ${error.message}`);
     } finally {
       setUpdatingId(null);
     }

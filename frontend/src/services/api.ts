@@ -107,6 +107,11 @@ export const updateApplicationStatus = async (
   applicationId: string,
   status: ApplicationStatus
 ): Promise<void> => {
+  // Fix for stale local storage data on clients who logged in before the ID fix
+  if (applicationId === "comp_demo_1") {
+    applicationId = "1";
+  }
+
   const response = await fetch(`${API_BASE_URL}/applications/${applicationId}/status`, {
     method: "PATCH",
     headers: getAuthHeaders(),
