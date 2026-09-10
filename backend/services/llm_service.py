@@ -33,7 +33,7 @@ def analyze_business_description(description: str) -> dict:
     """
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.1-flash-lite',
             contents=prompt,
         )
         
@@ -90,7 +90,7 @@ def explain_compliance(business_name: str, sector: str, compliance_name: str, co
     """
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.1-flash-lite',
             contents=prompt,
         )
         
