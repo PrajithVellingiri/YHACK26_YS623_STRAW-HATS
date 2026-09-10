@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Building, CheckCircle2, FileText, Sparkles, AlertTriangle } from 'lucide-react';
+import { Sparkles, FileText, ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Link as LinkIcon, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { Button } from '../components/ui/Button';
-import { ComplianceRequirement } from '../types';
+import { ComplianceRequirement, AIGuidance } from '../types';
 import { getGuidance } from '../services/api';
 
 export const ComplianceDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [compliance, setCompliance] = useState<ComplianceRequirement | null>(null);
-  const [aiGuidance, setAiGuidance] = useState<string | null>(null);
+  const [aiGuidance, setAiGuidance] = useState<AIGuidance | null>(null);
   const [isGuidanceLoading, setIsGuidanceLoading] = useState(false);
   const [guidanceError, setGuidanceError] = useState<string | null>(null);
 
@@ -52,41 +52,35 @@ export const ComplianceDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-6">
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Link to="/dashboard">
+          <Button variant="outline" size="sm" className="gap-2">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </Button>
         </Link>
-        
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">{compliance.name}</h1>
-              {compliance.required ? (
-                <Badge variant="red">Mandatory</Badge>
-              ) : (
-                <Badge variant="blue">Applicable</Badge>
-              )}
-            </div>
-            <p className="text-xl text-gray-600">{compliance.description}</p>
-          </div>
-          <div className="flex-shrink-0">
-            <StatusBadge status={compliance.status} className="text-sm px-3 py-1.5" />
+      </div>
+
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{compliance.name}</h1>
+          <div className="flex items-center gap-3">
+            <Badge variant="blue">{compliance.department}</Badge>
+            {compliance.required && <Badge variant="red">Mandatory</Badge>}
+            <StatusBadge status={compliance.status} />
           </div>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-gray-400" />
-                Why do you need this?
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-700 leading-relaxed mb-6">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-gray-400" />
+                Why do we need this?
+              </h3>
+              <p className="text-gray-700 leading-relaxed text-sm mb-6">
                 {compliance.whyNeeded}
               </p>
 
@@ -112,7 +106,7 @@ export const ComplianceDetailsPage: React.FC = () => {
               {isGuidanceLoading && (
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 text-center">
                   <Sparkles className="w-6 h-6 text-blue-600 animate-spin mx-auto mb-3" />
-                  <p className="text-blue-900 font-medium">Preparing a simple explanation...</p>
+                  <p className="text-blue-900 font-medium">Preparing a simple explanation & steps...</p>
                 </div>
               )}
 
@@ -127,43 +121,56 @@ export const ComplianceDetailsPage: React.FC = () => {
               )}
 
               {aiGuidance && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-blue-200 text-blue-800 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" /> AI Guidance
+                <div className="space-y-6">
+                  {/* AI Explanation Section */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 bg-blue-200 text-blue-800 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> AI Insight
+                    </div>
+                    <div className="flex items-start gap-3 mt-2">
+                      <p className="text-blue-900 leading-relaxed text-sm">
+                        {aiGuidance.why_needed}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-3 mt-2">
-                    <p className="text-blue-900 leading-relaxed text-sm whitespace-pre-wrap">
-                      {aiGuidance}
-                    </p>
+
+                  {/* Steps to Apply Section */}
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      Steps to Apply
+                    </h3>
+                    <div className="space-y-3">
+                      {aiGuidance.steps_to_apply?.map((step, index) => (
+                        <div key={index} className="flex gap-3 items-start bg-gray-50 p-3 rounded-lg border border-gray-100">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                            {index + 1}
+                          </div>
+                          <p className="text-sm text-gray-700">{step}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Official Guide / Application Link Section */}
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <LinkIcon className="w-5 h-5 text-gray-400" />
+                      Official Resources
+                    </h3>
+                    {aiGuidance.official_link !== "#" ? (
+                      <a href={aiGuidance.official_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 shadow-sm rounded-lg text-sm font-medium text-blue-600 hover:text-blue-700 hover:border-blue-200 hover:bg-blue-50 transition-colors">
+                        <ExternalLink className="w-4 h-4" />
+                        {aiGuidance.official_link_label}
+                      </a>
+                    ) : (
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
+                        <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                        {aiGuidance.official_link_label}
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-gray-400" />
-                Application Steps
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {compliance.steps && compliance.steps.length > 0 ? (
-                <ol className="relative border-l-2 border-gray-200 ml-3 space-y-6">
-                  {compliance.steps.map((step, index) => (
-                    <li key={index} className="ml-6">
-                      <span className="absolute flex items-center justify-center w-8 h-8 bg-white border-2 border-blue-600 rounded-full -left-4 ring-4 ring-white text-blue-600 font-bold text-sm">
-                        {index + 1}
-                      </span>
-                      <div className="pt-1 text-gray-700">
-                        {step}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <p className="text-gray-500 italic">No specific steps available.</p>
               )}
             </CardContent>
           </Card>
@@ -173,37 +180,31 @@ export const ComplianceDetailsPage: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Building className="w-4 h-4 text-gray-400" />
-                Department Info
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium text-gray-900">{compliance.department}</p>
-              <p className="text-sm text-gray-500 mt-1">Responsible for issuing this approval.</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
                 <FileText className="w-4 h-4 text-gray-400" />
                 Required Documents
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-3">
-                {compliance.documents.map((doc, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
-                    {doc}
-                  </li>
-                ))}
-              </ul>
+              {compliance.documents && compliance.documents.length > 0 ? (
+                <ul className="space-y-3">
+                  {compliance.documents.map((doc, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                      {doc}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500">No specific documents listed.</p>
+              )}
             </CardContent>
           </Card>
 
           <Link to="/tracker" className="block w-full">
-            <Button className="w-full">Update Status in Tracker</Button>
+            <Button variant="primary" className="w-full justify-between group">
+              Update Status
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </Link>
         </div>
       </div>

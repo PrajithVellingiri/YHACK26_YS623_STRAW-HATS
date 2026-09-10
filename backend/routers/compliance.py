@@ -88,11 +88,16 @@ def get_guidance(request: GuidanceRequest, db: Session = Depends(get_db)):
     if not comp:
         raise HTTPException(status_code=404, detail="Compliance not found")
         
-    guidance_text = explain_compliance(
+    guidance_data = explain_compliance(
         business_name=request.business_name,
         sector=request.sector,
         compliance_name=comp.name,
         compliance_desc=comp.description
     )
     
-    return GuidanceResponse(guidance=guidance_text)
+    return GuidanceResponse(
+        why_needed=guidance_data.get("why_needed", ""),
+        steps_to_apply=guidance_data.get("steps_to_apply", []),
+        official_link=guidance_data.get("official_link", "#"),
+        official_link_label=guidance_data.get("official_link_label", "Official Guide / Apply Here")
+    )

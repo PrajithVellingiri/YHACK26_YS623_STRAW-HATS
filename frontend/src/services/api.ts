@@ -1,4 +1,4 @@
-import { BusinessProfile, ComplianceRequirement, AnalyzeBusinessRequest, AnalyzeBusinessResponse, ApplicationStatus } from '../types';
+import { BusinessProfile, ComplianceRequirement, AnalyzeBusinessRequest, AnalyzeBusinessResponse, ApplicationStatus, AIGuidance } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
@@ -72,7 +72,7 @@ export const analyzeBusiness = async (
   return { business: mappedBusiness, compliances: mappedCompliances };
 };
 
-export const getGuidance = async (complianceIdStr: string): Promise<string> => {
+export const getGuidance = async (complianceIdStr: string): Promise<AIGuidance> => {
   const storedBusiness = localStorage.getItem("businessProfile");
   const storedCompliances = localStorage.getItem("compliances");
 
@@ -100,7 +100,7 @@ export const getGuidance = async (complianceIdStr: string): Promise<string> => {
   });
   
   const data = await handleResponse(response, "Failed to get guidance");
-  return data.guidance;
+  return data;
 };
 
 export const updateApplicationStatus = async (
@@ -181,7 +181,20 @@ export const getAdminStats = async (): Promise<any> => {
   const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
     headers: getAuthHeaders()
   });
-  return handleResponse(response, "Failed to fetch admin stats");
+  const data = await handleResponse(response, "Failed to fetch admin stats");
+  
+  const notStarted = data.total_applications - (data.submitted + data.under_review + data.approved);
+  return {
+    totalBusinesses: data.total_businesses,
+    totalApplications: data.total_applications,
+    totalCompliances: data.total_compliances,
+    statusDistribution: {
+      NOT_STARTED: notStarted > 0 ? notStarted : 0,
+      SUBMITTED: data.submitted,
+      UNDER_REVIEW: data.under_review,
+      APPROVED: data.approved
+    }
+  };
 };
 
 export const getAdminCompliances = async (): Promise<any> => {

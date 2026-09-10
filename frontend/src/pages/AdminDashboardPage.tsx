@@ -4,19 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import { Button } from '../components/ui/Button';
 import { AdminStats } from '../types';
 import { getAdminStats } from '../services/api';
-import { BarChart3, Settings, Database, Activity, FileText } from 'lucide-react';
+import { BarChart3, Settings, Database, Activity, FileText, AlertTriangle } from 'lucide-react';
 
 export const AdminDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const data = await getAdminStats();
         setStats(data);
-      } catch (e) {
+      } catch (e: any) {
         console.error(e);
+        setError(e.message || "Failed to load dashboard data");
       } finally {
         setIsLoading(false);
       }
@@ -24,8 +26,18 @@ export const AdminDashboardPage: React.FC = () => {
     fetchStats();
   }, []);
 
-  if (isLoading || !stats) {
+  if (isLoading) {
     return <div className="text-center py-12">Loading system overview...</div>;
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="text-center py-12">
+        <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Dashboard</h2>
+        <p className="text-gray-600">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -79,19 +91,19 @@ export const AdminDashboardPage: React.FC = () => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-              <p className="text-2xl font-bold text-gray-700">{stats.statusDistribution.NOT_STARTED}</p>
+              <p className="text-2xl font-bold text-gray-700">{stats.statusDistribution?.NOT_STARTED || 0}</p>
               <p className="text-xs font-medium text-gray-500 uppercase mt-1">Not Started</p>
             </div>
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-              <p className="text-2xl font-bold text-blue-700">{stats.statusDistribution.SUBMITTED}</p>
+              <p className="text-2xl font-bold text-blue-700">{stats.statusDistribution?.SUBMITTED || 0}</p>
               <p className="text-xs font-medium text-blue-600 uppercase mt-1">Submitted</p>
             </div>
             <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-100">
-              <p className="text-2xl font-bold text-yellow-700">{stats.statusDistribution.UNDER_REVIEW}</p>
+              <p className="text-2xl font-bold text-yellow-700">{stats.statusDistribution?.UNDER_REVIEW || 0}</p>
               <p className="text-xs font-medium text-yellow-600 uppercase mt-1">Under Review</p>
             </div>
             <div className="p-4 bg-green-50 rounded-lg border border-green-100">
-              <p className="text-2xl font-bold text-green-700">{stats.statusDistribution.APPROVED}</p>
+              <p className="text-2xl font-bold text-green-700">{stats.statusDistribution?.APPROVED || 0}</p>
               <p className="text-xs font-medium text-green-600 uppercase mt-1">Approved</p>
             </div>
           </div>

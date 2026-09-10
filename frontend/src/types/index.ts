@@ -62,3 +62,9 @@ export interface OfficerStats {
   underReview: number;
   approved: number;
 }
+export interface AIGuidance {
+  why_needed: string;
+  steps_to_apply: string[];
+  official_link: string;
+  official_link_label: string;
+}

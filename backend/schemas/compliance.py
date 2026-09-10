@@ -38,4 +38,7 @@ class GuidanceRequest(BaseModel):
     compliance_id: int
 
 class GuidanceResponse(BaseModel):
-    guidance: str
+    why_needed: str
+    steps_to_apply: List[str]
+    official_link: str
+    official_link_label: str
