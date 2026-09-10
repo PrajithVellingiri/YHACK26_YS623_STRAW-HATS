@@ -4,3 +4,5 @@ sqlalchemy
 pydantic
 google-genai
 python-dotenv
+passlib
+bcrypt

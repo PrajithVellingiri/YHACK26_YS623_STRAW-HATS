@@ -2,6 +2,15 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from database.database import Base
 from datetime import datetime
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    email = Column(String, unique=True, index=True)
+    password_hash = Column(String)
+    role = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 class Business(Base):
     __tablename__ = "businesses"
     id = Column(Integer, primary_key=True, index=True)
