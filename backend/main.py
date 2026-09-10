@@ -12,7 +12,7 @@ app = FastAPI(title="Compliance Platform API")
 # Configure CORS dynamically
 ALLOWED_ORIGINS = os.getenv(
     "ALLOWED_ORIGINS", 
-    "http://localhost:5173,http://localhost:3000"
+    "http://localhost:5173,http://localhost:3000,https://yhack-26-ys-623-straw-hats.vercel.app/"
 ).split(",")
 
 app.add_middleware(
