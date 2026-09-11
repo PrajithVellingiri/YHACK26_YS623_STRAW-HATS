@@ -4,7 +4,7 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { getAdminCompliances, createAdminCompliance, updateAdminCompliance, deleteAdminCompliance } from '../services/api';
-import { ArrowLeft, Plus, Edit2, Trash2, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowLeft, X, Database } from 'lucide-react';
 
 export const ComplianceManagementPage: React.FC = () => {
   const [rules, setRules] = useState<any[]>([]);

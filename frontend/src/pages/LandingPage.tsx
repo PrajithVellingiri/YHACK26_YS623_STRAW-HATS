@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, FileCheck, Search, Shield, Zap, TrendingUp, CheckCircle } from 'lucide-react';
+import { ArrowRight, FileCheck, Search, Shield } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
 export const LandingPage: React.FC = () => {
