@@ -35,15 +35,19 @@ def get_applicable_compliances(db: Session, business_data: ComplianceGenerateReq
     for rec in ai_recommendations:
         name = rec.get("Requirement Name", "Unknown Requirement")
         req_type = rec.get("Type", "License")
-        authority = rec.get("Authority", "Relevant Authority")
+        authority = rec.get("Relevant Indian Authority", rec.get("Authority", "Relevant Authority"))
+        jurisdiction = rec.get("Jurisdiction", "India")
         
         # Combine fields into the description
         applicability = rec.get("Applicability", "")
         why = rec.get("Why it may apply", "")
         conditions = rec.get("Conditions", "")
         next_step = rec.get("Next Step", "")
+        resource = rec.get("Official Resource", "")
         
-        desc = f"Applicability: {applicability}\nWhy: {why}\nConditions: {conditions}\nNext Step: {next_step}"
+        desc = f"Jurisdiction: {jurisdiction}\nApplicability: {applicability}\nWhy: {why}\nConditions: {conditions}\nNext Step: {next_step}"
+        if resource and resource != "#":
+            desc += f"\nOfficial Resource: {resource}"
         
         # Check if it already exists to avoid duplicates
         existing_comp = db.query(Compliance).filter(

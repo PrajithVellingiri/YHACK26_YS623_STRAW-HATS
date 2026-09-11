@@ -64,50 +64,58 @@ def generate_ai_compliances(business_name: str, sector: str, state: str, busines
     client = genai.Client(api_key=api_key)
     
     prompt = f"""
-You are an expert business compliance consultant.
+You are an expert business compliance consultant for businesses operating ONLY in INDIA 🇮🇳.
 Analyze the following business and determine what compliance requirements could potentially apply to this specific business.
 
 Business Name: {business_name}
 Context / Sector Details: {sector}
-State: {state}
+State: {state} (India)
 Size: {business_size}
 Stage: {business_stage}
 
-STEP 1 — UNDERSTAND THE BUSINESS
-Analyze all available information, including business type, industry, products/services, scale, location, employees, machinery, raw materials, environmental impact, fire risk, etc.
+🛑 STRICT JURISDICTION RULE:
+BizClear currently provides compliance guidance ONLY for businesses operating in India.
+All recommendations, government authorities, regulatory bodies, licenses, registrations, approvals, NOCs, certificates, laws, and official websites MUST be relevant to India.
+NEVER recommend United States regulations, FDA, US authorities, European regulations, UK regulations, or foreign compliance portals.
+For Finance/FinTech: Prioritize Indian authorities like RBI, SEBI, IRDAI, PFRDA where relevant. Do not recommend US SEC, FINRA, etc.
+For Food: Prioritize FSSAI, not FDA.
+For Environment: Prioritize CPCB / State PCB, not EPA.
 
-STEP 2 — ANALYZE MULTIPLE COMPLIANCE CATEGORIES
-Systematically check:
-1. Business Foundation
-2. Tax and Business Registrations
-3. MSME / Small Business
-4. Industry-Specific Requirements
-5. Local Authority Requirements
-6. Environmental Compliance
-7. Fire and Safety
-8. Factory and Operational Compliance
-9. Labour and Workforce Compliance
-10. Product-Specific Requirements
-11. NOCs and Approvals
+📍 INDIA → STATE → LOCAL HIERARCHY:
+Evaluate requirements at the Central (Government of India) level, State level ({state}), and Local level (Municipality/Panchayat).
+
+STEP 1 — UNDERSTAND THE BUSINESS
+Analyze all available information, including business type, industry, scale, location, environmental impact, fire risk, etc.
+
+STEP 2 — ANALYZE MULTIPLE COMPLIANCE CATEGORIES (INDIAN CONTEXT)
+1. Business Foundation (e.g. MCA, Shop & Establishment)
+2. Tax & Registrations (e.g. GST, PAN, TAN, Professional Tax)
+3. MSME (e.g. Udyam)
+4. Industry-Specific (e.g. FSSAI for food, RBI for fintech, CDSCO for pharma)
+5. Local Authority (e.g. Trade License, Signboard License)
+6. Environmental (e.g. Consent to Establish/Operate from State PCB)
+7. Fire & Safety (e.g. Fire NOC)
+8. Factory (e.g. Factory License under Factories Act, 1948)
+9. Labour (e.g. EPF, ESI, Labour License)
+10. NOCs and Approvals
 
 STEP 3 — CLASSIFY RECOMMENDATIONS
-Every recommendation must be classified as one of:
-- LIKELY REQUIRED
-- MAY BE REQUIRED
-- RECOMMENDED / OPTIONAL
+Classify as: LIKELY REQUIRED, MAY BE REQUIRED, or RECOMMENDED / OPTIONAL.
 
 IMPORTANT RULE ABOUT "NO REQUIREMENTS":
-NEVER casually say "No certificates required." If no specific mandatory certificate is confidently identified, include a general fallback recommendation stating: "No specific mandatory certificate was identified from the information currently available. However, your business may still need registrations, licenses, approvals, NOCs, or other compliance requirements depending on its location, scale, operations, and specific activities."
+NEVER say "No certificates required." If no specific mandatory certificate is confidently identified, include a fallback: "No specific mandatory certificate was identified. However, your business may still need registrations, licenses, approvals, or NOCs depending on its location and operations in India."
 
 REQUIRED OUTPUT STRUCTURE:
 Return ONLY a valid JSON array of objects. Each object must have exactly these keys:
 - "Requirement Name": string
+- "Jurisdiction": string (e.g., India, or {state}, or Local)
 - "Type": string (Registration / License / Approval / NOC / Certificate)
 - "Applicability": string (LIKELY REQUIRED / MAY BE REQUIRED / RECOMMENDED / OPTIONAL)
+- "Relevant Indian Authority": string (Mention the Indian authority when confidently known)
 - "Why it may apply": string (Explain the connection to the business profile)
 - "Conditions": string (Explain what determines whether it applies)
-- "Authority": string (Mention the relevant authority when confidently known)
-- "Next Step": string (Tell the user what to verify or do next)
+- "Next Step": string (Tell the user what to verify or do next in India)
+- "Official Resource": string (Only provide an official Indian government/regulatory resource URL like .gov.in or .nic.in when confidently known. If unknown, return "#")
 
 Do not include markdown formatting like ```json.
 """
@@ -135,9 +143,9 @@ def explain_compliance(business_name: str, sector: str, compliance_name: str, co
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         return {
-            "why_needed": f"This compliance ({compliance_name}) is legally required for {sector} businesses like {business_name} to ensure standardized safety and regulatory adherence.",
+            "why_needed": f"This compliance ({compliance_name}) is legally required for {sector} businesses like {business_name} to ensure standardized safety and regulatory adherence in India.",
             "steps_to_apply": [
-                "Check eligibility requirements on the official portal.",
+                "Check eligibility requirements on the official Indian portal.",
                 "Prepare all necessary identity and business documents.",
                 "Fill out and submit the official application form.",
                 "Track the application status through the regulatory portal."
@@ -149,16 +157,21 @@ def explain_compliance(business_name: str, sector: str, compliance_name: str, co
     client = genai.Client(api_key=api_key)
     
     prompt = f"""
-    You are a helpful assistant for a business owner.
+    You are an expert compliance assistant for a business owner operating in INDIA 🇮🇳.
     Business Name: {business_name}
     Sector: {sector}
     Compliance Requirement: {compliance_name}
     Official Description: {compliance_desc}
     
+    🛑 STRICT JURISDICTION RULE:
+    You must ONLY provide information relevant to INDIA. 
+    Never recommend US laws, FDA, SEC, European laws, or any foreign government portals.
+    Only recommend official Indian government sources (e.g. .gov.in, .nic.in) or Indian statutory bodies (RBI, SEBI, FSSAI, etc.).
+    
     Return ONLY a valid JSON object with the following keys:
-    1. "why_needed": Explain specifically why this business needs this compliance, what risk it avoids, and its business importance. (Target exactly 40-60 words).
-    2. "steps_to_apply": A list of strings containing 4-8 practical, compliance-specific numbered steps to apply.
-    3. "official_link": A verified official government/department URL to apply or read guidelines. DO NOT hallucinate. If you cannot verify an exact URL, use a general department portal or return "#".
+    1. "why_needed": Explain specifically why this business needs this compliance in India, what risk it avoids, and its business importance. (Target exactly 40-60 words).
+    2. "steps_to_apply": A list of strings containing 4-8 practical, compliance-specific numbered steps to apply in India.
+    3. "official_link": A verified official Indian government/department URL to apply or read guidelines. DO NOT hallucinate URLs. If you cannot verify an exact Indian URL, return "#".
     4. "official_link_label": "Official Guide / Apply Here" (or add "(Link unavailable)" if you returned "#").
     
     Output ONLY JSON. Do not include markdown formatting like ```json.
