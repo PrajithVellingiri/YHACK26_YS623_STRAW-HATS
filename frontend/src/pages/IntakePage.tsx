@@ -44,124 +44,135 @@ export const IntakePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-md mx-auto text-center space-y-6">
-        <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center animate-pulse">
-          <Sparkles className="w-8 h-8" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-md mx-auto text-center space-y-6 relative">
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gov-teal/20 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
+        <div className="w-20 h-20 bg-teal-50 text-gov-teal rounded-full flex items-center justify-center shadow-inner relative z-10">
+          <Sparkles className="w-10 h-10 animate-pulse" />
         </div>
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-gray-900">Understanding your business...</h2>
-          <p className="text-gray-500">Identifying business characteristics and preparing your compliance requirements.</p>
+        <div className="space-y-2 relative z-10">
+          <h2 className="text-2xl font-extrabold text-gov-navy tracking-tight">Understanding your business...</h2>
+          <p className="text-slate-500 font-medium">Identifying business characteristics and preparing your compliance requirements.</p>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2 mt-4 overflow-hidden">
-          <div className="bg-blue-600 h-2 rounded-full animate-[progress_2s_ease-in-out_infinite]" style={{ width: '50%' }}></div>
+        <div className="w-full bg-slate-200 rounded-full h-2 mt-4 overflow-hidden relative z-10 shadow-inner">
+          <div className="bg-gradient-to-r from-teal-400 to-gov-teal h-2 rounded-full animate-[progress_2s_ease-in-out_infinite]" style={{ width: '50%' }}></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <div className="mb-8 text-center">
-        <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 text-blue-600 rounded-xl mb-4">
-          <Building2 className="w-6 h-6" />
+    <div className="max-w-4xl mx-auto py-12 px-4 relative">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gov-teal/10 rounded-full blur-3xl pointer-events-none" />
+      
+      <div className="mb-10 text-center relative z-10">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-white shadow-soft border border-slate-200 text-gov-teal rounded-2xl mb-6">
+          <Building2 className="w-8 h-8" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Tell us about your business</h1>
-        <p className="text-gray-600">Provide details below so we can accurately determine your compliance needs.</p>
+        <h1 className="text-4xl font-extrabold text-gov-navy mb-3 tracking-tight">Tell us about your business</h1>
+        <p className="text-lg text-slate-500 font-medium max-w-xl mx-auto">Provide details below so our AI can accurately map out your regulatory compliance needs.</p>
       </div>
 
-      <Card>
+      <Card className="relative z-10 border-t-4 border-t-gov-teal">
         <form onSubmit={handleSubmit}>
-          <CardHeader>
-            <CardTitle>Business Profile</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4 items-start">
-              <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-medium text-blue-900 text-sm mb-1">AI Assistance (Optional)</h4>
-                <p className="text-blue-800 text-sm">
-                  Describe what you want to do in your own words. Our AI will help fill in the structured details.
-                </p>
-                <div className="mt-3">
-                  <Textarea 
-                    name="description"
-                    placeholder="e.g., I want to start a small bakery in Coimbatore."
-                    value={formData.description}
+          <CardContent className="p-8">
+            <div className="grid md:grid-cols-2 gap-10">
+              
+              {/* Left Column: AI Assistance */}
+              <div className="space-y-4">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-teal-400 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="relative bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Sparkles className="w-5 h-5 text-gov-teal" />
+                      <h4 className="font-extrabold text-gov-navy tracking-tight">AI Assistance (Optional)</h4>
+                    </div>
+                    <p className="text-slate-500 text-sm mb-4 font-medium leading-relaxed">
+                      Describe what you want to do in plain English. Our AI will analyze your intent and pre-fill structured details.
+                    </p>
+                    <Textarea 
+                      name="description"
+                      placeholder="e.g., I want to start a small organic bakery in Coimbatore."
+                      value={formData.description}
+                      onChange={handleChange}
+                      rows={6}
+                      className="resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Structured Data */}
+              <div className="space-y-5">
+                <h4 className="font-extrabold text-gov-navy tracking-tight border-b border-slate-100 pb-3">Structured Details</h4>
+                <Input 
+                  name="name"
+                  label="Business Name" 
+                  placeholder="e.g., ABC Bakery"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Input 
+                    name="sector"
+                    label="Sector" 
+                    placeholder="e.g., Food, Tech"
+                    value={formData.sector}
                     onChange={handleChange}
-                    rows={3}
+                    required
+                  />
+                  <Select 
+                    name="state"
+                    label="State / Location"
+                    value={formData.state}
+                    onChange={handleChange}
+                    options={[
+                      { label: 'Tamil Nadu', value: 'Tamil Nadu' },
+                      { label: 'Karnataka', value: 'Karnataka' },
+                      { label: 'Maharashtra', value: 'Maharashtra' },
+                      { label: 'Delhi', value: 'Delhi' },
+                    ]}
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Select 
+                    name="businessSize"
+                    label="Business Size"
+                    value={formData.businessSize}
+                    onChange={handleChange}
+                    options={[
+                      { label: 'Micro', value: 'Micro' },
+                      { label: 'Small', value: 'Small' },
+                      { label: 'Medium', value: 'Medium' },
+                      { label: 'Large', value: 'Large' },
+                    ]}
+                    required
+                  />
+                  <Select 
+                    name="businessStage"
+                    label="Business Stage"
+                    value={formData.businessStage}
+                    onChange={handleChange}
+                    options={[
+                      { label: 'Starting', value: 'Starting' },
+                      { label: 'Operating', value: 'Operating' },
+                      { label: 'Expanding', value: 'Expanding' },
+                    ]}
+                    required
                   />
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-4 pt-4 border-t border-gray-100">
-              <Input 
-                name="name"
-                label="Business Name" 
-                placeholder="e.g., ABC Bakery"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input 
-                  name="sector"
-                  label="Sector" 
-                  placeholder="e.g., Food, Retail, Tech"
-                  value={formData.sector}
-                  onChange={handleChange}
-                  required
-                />
-                <Select 
-                  name="state"
-                  label="State / Location"
-                  value={formData.state}
-                  onChange={handleChange}
-                  options={[
-                    { label: 'Tamil Nadu', value: 'Tamil Nadu' },
-                    { label: 'Karnataka', value: 'Karnataka' },
-                    { label: 'Maharashtra', value: 'Maharashtra' },
-                    { label: 'Delhi', value: 'Delhi' },
-                  ]}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Select 
-                  name="businessSize"
-                  label="Business Size"
-                  value={formData.businessSize}
-                  onChange={handleChange}
-                  options={[
-                    { label: 'Micro', value: 'Micro' },
-                    { label: 'Small', value: 'Small' },
-                    { label: 'Medium', value: 'Medium' },
-                    { label: 'Large', value: 'Large' },
-                  ]}
-                  required
-                />
-                <Select 
-                  name="businessStage"
-                  label="Business Stage"
-                  value={formData.businessStage}
-                  onChange={handleChange}
-                  options={[
-                    { label: 'Starting', value: 'Starting' },
-                    { label: 'Operating', value: 'Operating' },
-                    { label: 'Expanding', value: 'Expanding' },
-                  ]}
-                  required
-                />
-              </div>
             </div>
           </CardContent>
-          <CardFooter className="justify-end">
-            <Button type="submit" size="lg" className="w-full sm:w-auto">
+          <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <Button type="submit" size="lg" className="w-full sm:w-auto shadow-premium text-lg px-8">
               Analyze My Business
             </Button>
-          </CardFooter>
+          </div>
         </form>
       </Card>
     </div>

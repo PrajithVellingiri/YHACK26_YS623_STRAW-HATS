@@ -81,54 +81,61 @@ export const ComplianceManagementPage: React.FC = () => {
   const getDocCount = (docString: string) => docString ? docString.split(',').length : 0;
 
   if (isLoading) {
-    return <div className="text-center py-12">Loading compliance data...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-md mx-auto text-center space-y-6">
+        <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center animate-pulse shadow-inner">
+          <Database className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-extrabold text-gov-navy tracking-tight">Loading compliance rules...</h2>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       <div>
-        <Link to="/admin" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-6">
+        <Link to="/admin" className="inline-flex items-center text-sm font-bold text-slate-400 hover:text-gov-teal mb-6 uppercase tracking-wider transition-colors">
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to System Overview
         </Link>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-soft border border-slate-200">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Compliance Rules</h1>
-            <p className="text-gray-600">Manage the master dataset used by the Rules Engine.</p>
+            <h1 className="text-3xl font-extrabold text-gov-navy tracking-tight mb-1">Compliance Rules</h1>
+            <p className="text-slate-500 font-medium">Manage the master dataset used by the Rules Engine.</p>
           </div>
-          <Button className="gap-2" onClick={() => handleOpenModal()}><Plus className="w-4 h-4" /> Add Rule</Button>
+          <Button variant="primary" className="gap-2 shadow-premium bg-amber-600 hover:bg-amber-700 text-white" onClick={() => handleOpenModal()}><Plus className="w-4 h-4" /> Add Rule</Button>
         </div>
       </div>
 
-      <Card>
+      <Card className="border-t-4 border-t-amber-500 shadow-soft">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-600">
-              <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
+            <table className="w-full text-sm text-left text-slate-600">
+              <thead className="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 border-b border-slate-100">
                 <tr>
-                  <th className="px-6 py-4 font-medium">ID</th>
-                  <th className="px-6 py-4 font-medium">Name</th>
-                  <th className="px-6 py-4 font-medium">Department</th>
-                  <th className="px-6 py-4 font-medium">Required Docs</th>
-                  <th className="px-6 py-4 font-medium text-right">Actions</th>
+                  <th className="px-6 py-5">ID</th>
+                  <th className="px-6 py-5">Name</th>
+                  <th className="px-6 py-5">Department</th>
+                  <th className="px-6 py-5">Required Docs</th>
+                  <th className="px-6 py-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-slate-100">
                 {rules.map((rule) => (
-                  <tr key={rule.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs">{rule.id}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900">{rule.name}</td>
-                    <td className="px-6 py-4">{rule.department}</td>
+                  <tr key={rule.id} className="hover:bg-slate-50 transition-colors group">
+                    <td className="px-6 py-4 font-mono text-xs font-bold text-slate-400">{rule.id}</td>
+                    <td className="px-6 py-4 font-extrabold text-gov-navy">{rule.name}</td>
+                    <td className="px-6 py-4 font-medium text-slate-600">{rule.department}</td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-2 py-1 rounded-md text-xs font-medium">
+                      <span className="inline-flex items-center justify-center bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
                         {getDocCount(rule.required_documents)} docs
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="sm" className="h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50" onClick={() => handleOpenModal(rule)}>
+                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="sm" className="h-8 px-2 text-gov-blue hover:text-blue-700 hover:bg-blue-50" onClick={() => handleOpenModal(rule)}>
                           <Edit2 className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(rule.id)}>
+                        <Button variant="ghost" size="sm" className="h-8 px-2 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(rule.id)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -137,8 +144,8 @@ export const ComplianceManagementPage: React.FC = () => {
                 ))}
                 {rules.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                      No compliance rules configured.
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500 font-medium">
+                      No compliance rules configured in the system.
                     </td>
                   </tr>
                 )}
@@ -149,13 +156,13 @@ export const ComplianceManagementPage: React.FC = () => {
       </Card>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-xl font-bold">{editingRule ? 'Edit Rule' : 'Add Rule'}</h2>
-              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-premium w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50">
+              <h2 className="text-xl font-extrabold text-gov-navy tracking-tight">{editingRule ? 'Edit Rule' : 'Add Rule'}</h2>
+              <button onClick={handleCloseModal} className="text-slate-400 hover:text-slate-600 transition-colors"><X className="w-5 h-5" /></button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <Input label="Rule Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
               <Input label="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} required />
               <div className="grid grid-cols-2 gap-4">
@@ -167,14 +174,14 @@ export const ComplianceManagementPage: React.FC = () => {
                 <Input label="Requirement Type" value={formData.requirement_type} onChange={e => setFormData({...formData, requirement_type: e.target.value})} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea className="w-full px-3 py-2 border rounded-xl" rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required></textarea>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Description</label>
+                <textarea className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-none shadow-sm font-medium text-slate-700" rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required></textarea>
               </div>
               <Input label="Required Documents (comma-separated)" value={formData.required_documents} onChange={e => setFormData({...formData, required_documents: e.target.value})} />
               
-              <div className="pt-4 flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={handleCloseModal}>Cancel</Button>
-                <Button type="submit">{editingRule ? 'Save Changes' : 'Create Rule'}</Button>
+              <div className="pt-6 flex justify-end gap-3 border-t border-slate-100">
+                <Button type="button" variant="outline" onClick={handleCloseModal} className="font-bold">Cancel</Button>
+                <Button type="submit" variant="primary" className="bg-amber-600 hover:bg-amber-700 text-white shadow-md font-bold">{editingRule ? 'Save Changes' : 'Create Rule'}</Button>
               </div>
             </form>
           </div>

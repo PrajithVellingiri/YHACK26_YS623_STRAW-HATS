@@ -44,108 +44,119 @@ export const ApplicationReviewPage: React.FC = () => {
     }
   };
 
-  if (!appDetails) return <div className="p-8 text-center">Loading...</div>;
+  if (!appDetails) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-md mx-auto text-center space-y-6">
+        <div className="w-16 h-16 bg-blue-50 text-gov-blue rounded-full flex items-center justify-center animate-pulse shadow-inner">
+          <Activity className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-extrabold text-gov-navy tracking-tight">Loading application details...</h2>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       <div>
-        <Link to="/officer" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-6">
+        <Link to="/officer" className="inline-flex items-center text-sm font-bold text-slate-400 hover:text-gov-teal mb-6 uppercase tracking-wider transition-colors">
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </Link>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-soft border border-slate-200">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Application #{appDetails.application.id}</h1>
-            <p className="text-gray-600">Review details and update status.</p>
+            <h1 className="text-3xl font-extrabold text-gov-navy tracking-tight mb-1">Application #{appDetails.application.id}</h1>
+            <p className="text-slate-500 font-medium">Review details and update status.</p>
           </div>
-          <StatusBadge status={appDetails.application.status} className="text-base px-3 py-1" />
+          <StatusBadge status={appDetails.application.status} className="text-sm px-4 py-1.5 shadow-sm" />
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Building className="w-5 h-5" /> Business Details</CardTitle>
+      <div className="grid md:grid-cols-2 gap-8">
+        <Card className="border-t-4 border-t-gov-teal shadow-soft">
+          <CardHeader className="bg-slate-50 border-b border-slate-100 p-5">
+            <CardTitle className="flex items-center gap-2 text-gov-navy font-extrabold uppercase tracking-wider text-sm"><Building className="w-4 h-4 text-gov-teal" /> Business Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5 p-6">
             <div>
-              <p className="text-sm font-medium text-gray-500">Business Name</p>
-              <p className="text-gray-900 font-medium">{appDetails.business.name}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Business Name</p>
+              <p className="text-lg font-extrabold text-gov-navy">{appDetails.business.name}</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               <div>
-                <p className="text-sm font-medium text-gray-500">Sector</p>
-                <p className="text-gray-900 text-sm">{appDetails.business.sector}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Sector</p>
+                <p className="text-slate-700 font-medium bg-slate-50 p-2 rounded-lg border border-slate-100">{appDetails.business.sector}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">State</p>
-                <p className="text-gray-900 text-sm">{appDetails.business.state}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">State</p>
+                <p className="text-slate-700 font-medium bg-slate-50 p-2 rounded-lg border border-slate-100">{appDetails.business.state}</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               <div>
-                <p className="text-sm font-medium text-gray-500">Size</p>
-                <p className="text-gray-900 text-sm">{appDetails.business.business_size}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Size</p>
+                <p className="text-slate-700 font-medium bg-slate-50 p-2 rounded-lg border border-slate-100">{appDetails.business.business_size}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Stage</p>
-                <p className="text-gray-900 text-sm">{appDetails.business.business_stage}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Stage</p>
+                <p className="text-slate-700 font-medium bg-slate-50 p-2 rounded-lg border border-slate-100">{appDetails.business.business_stage}</p>
               </div>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Description</p>
-              <p className="text-gray-900 text-sm">{appDetails.business.description}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Description</p>
+              <p className="text-slate-600 text-sm font-medium leading-relaxed">{appDetails.business.description}</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><FileText className="w-5 h-5" /> Compliance Details</CardTitle>
+        <Card className="border-t-4 border-t-gov-blue shadow-soft">
+          <CardHeader className="bg-slate-50 border-b border-slate-100 p-5">
+            <CardTitle className="flex items-center gap-2 text-gov-navy font-extrabold uppercase tracking-wider text-sm"><FileText className="w-4 h-4 text-gov-blue" /> Compliance Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5 p-6">
             <div>
-              <p className="text-sm font-medium text-gray-500">Licence / Approval</p>
-              <p className="text-gray-900 font-medium">{appDetails.compliance.name}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Licence / Approval</p>
+              <p className="text-lg font-extrabold text-gov-navy">{appDetails.compliance.name}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Department</p>
-              <p className="text-gray-900 text-sm">{appDetails.compliance.department}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Department</p>
+              <p className="text-slate-700 font-medium bg-slate-50 p-2 rounded-lg border border-slate-100">{appDetails.compliance.department}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Description</p>
-              <p className="text-gray-900 text-sm">{appDetails.compliance.description}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Description</p>
+              <p className="text-slate-600 text-sm font-medium leading-relaxed">{appDetails.compliance.description}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Required Documents</p>
-              <p className="text-gray-900 text-sm">{appDetails.compliance.required_documents}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Required Documents</p>
+              <p className="text-slate-600 text-sm font-medium leading-relaxed">{appDetails.compliance.required_documents}</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-blue-200">
-        <CardHeader className="bg-blue-50 border-b border-blue-100">
-          <CardTitle className="flex items-center gap-2 text-blue-900"><Activity className="w-5 h-5" /> Officer Action</CardTitle>
+      <Card className="border-t-4 border-t-amber-500 shadow-premium overflow-hidden">
+        <CardHeader className="bg-amber-50 border-b border-amber-100 p-6">
+          <CardTitle className="flex items-center gap-2 text-amber-700 font-extrabold tracking-tight text-lg"><Activity className="w-5 h-5" /> Officer Action</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="max-w-md space-y-4">
-            <p className="text-sm text-gray-600">Update the current status of this application based on your review.</p>
-            <div className="flex items-end gap-4">
-              <div className="flex-1">
-                <Select
-                  value={appDetails.application.status}
-                  onChange={(e) => handleStatusChange(e.target.value as ApplicationStatus)}
-                  disabled={isUpdating}
-                  options={[
-                    { label: 'Not Started', value: 'NOT_STARTED' },
-                    { label: 'Submitted', value: 'SUBMITTED' },
-                    { label: 'Under Review', value: 'UNDER_REVIEW' },
-                    { label: 'Approved', value: 'APPROVED' },
-                  ]}
-                />
-              </div>
+        <CardContent className="p-8 bg-white">
+          <div className="max-w-md space-y-6">
+            <p className="text-sm font-medium text-slate-600 leading-relaxed">Update the current status of this application based on your review. The business owner will be notified of changes.</p>
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Set Application Status</label>
+              <Select
+                value={appDetails.application.status}
+                onChange={(e) => handleStatusChange(e.target.value as ApplicationStatus)}
+                disabled={isUpdating}
+                className="font-bold text-gov-navy shadow-sm"
+                options={[
+                  { label: 'Not Started', value: 'NOT_STARTED' },
+                  { label: 'Submitted', value: 'SUBMITTED' },
+                  { label: 'Under Review', value: 'UNDER_REVIEW' },
+                  { label: 'Approved', value: 'APPROVED' },
+                ]}
+              />
             </div>
-            {isUpdating && <p className="text-sm text-blue-600 animate-pulse">Saving changes...</p>}
+            <div className="h-4">
+              {isUpdating && <p className="text-xs font-bold text-amber-600 animate-pulse uppercase tracking-wider">Saving changes to database...</p>}
+            </div>
           </div>
         </CardContent>
       </Card>
