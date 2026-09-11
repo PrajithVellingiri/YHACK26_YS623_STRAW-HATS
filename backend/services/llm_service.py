@@ -22,7 +22,7 @@ def analyze_business_description(description: str) -> dict:
     
     prompt = f"""
     Analyze the following business description and extract these exact fields:
-    - sector (e.g., Food, IT, Manufacturing, Retail)
+    - sector (Be highly specific! e.g., 'Small-scale Textile Manufacturing', 'Organic Food Bakery', 'B2B SaaS Startup'. Do NOT use generic terms like 'Manufacturing' if more detail is provided. This must capture the full operational context.)
     - state (The Indian state, e.g., Tamil Nadu, Maharashtra)
     - business_size (e.g., Micro, Small, Medium, Large)
     - business_stage (e.g., Starting, Expanding, Established)
@@ -52,6 +52,81 @@ def analyze_business_description(description: str) -> dict:
             "business_size": "Unknown",
             "business_stage": "Unknown"
         }
+
+def generate_ai_compliances(business_name: str, sector: str, state: str, business_size: str, business_stage: str) -> list:
+    """
+    Generate comprehensive AI compliance recommendations based on business context.
+    """
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return []
+
+    client = genai.Client(api_key=api_key)
+    
+    prompt = f"""
+You are an expert business compliance consultant.
+Analyze the following business and determine what compliance requirements could potentially apply to this specific business.
+
+Business Name: {business_name}
+Context / Sector Details: {sector}
+State: {state}
+Size: {business_size}
+Stage: {business_stage}
+
+STEP 1 — UNDERSTAND THE BUSINESS
+Analyze all available information, including business type, industry, products/services, scale, location, employees, machinery, raw materials, environmental impact, fire risk, etc.
+
+STEP 2 — ANALYZE MULTIPLE COMPLIANCE CATEGORIES
+Systematically check:
+1. Business Foundation
+2. Tax and Business Registrations
+3. MSME / Small Business
+4. Industry-Specific Requirements
+5. Local Authority Requirements
+6. Environmental Compliance
+7. Fire and Safety
+8. Factory and Operational Compliance
+9. Labour and Workforce Compliance
+10. Product-Specific Requirements
+11. NOCs and Approvals
+
+STEP 3 — CLASSIFY RECOMMENDATIONS
+Every recommendation must be classified as one of:
+- LIKELY REQUIRED
+- MAY BE REQUIRED
+- RECOMMENDED / OPTIONAL
+
+IMPORTANT RULE ABOUT "NO REQUIREMENTS":
+NEVER casually say "No certificates required." If no specific mandatory certificate is confidently identified, include a general fallback recommendation stating: "No specific mandatory certificate was identified from the information currently available. However, your business may still need registrations, licenses, approvals, NOCs, or other compliance requirements depending on its location, scale, operations, and specific activities."
+
+REQUIRED OUTPUT STRUCTURE:
+Return ONLY a valid JSON array of objects. Each object must have exactly these keys:
+- "Requirement Name": string
+- "Type": string (Registration / License / Approval / NOC / Certificate)
+- "Applicability": string (LIKELY REQUIRED / MAY BE REQUIRED / RECOMMENDED / OPTIONAL)
+- "Why it may apply": string (Explain the connection to the business profile)
+- "Conditions": string (Explain what determines whether it applies)
+- "Authority": string (Mention the relevant authority when confidently known)
+- "Next Step": string (Tell the user what to verify or do next)
+
+Do not include markdown formatting like ```json.
+"""
+    try:
+        response = client.models.generate_content(
+            model='gemini-3.1-flash-lite',
+            contents=prompt,
+        )
+        
+        text = response.text.strip()
+        if text.startswith("```json"):
+            text = text[7:-3].strip()
+        elif text.startswith("```"):
+            text = text[3:-3].strip()
+            
+        return json.loads(text)
+    except Exception as e:
+        print(f"LLM Error generating compliances: {e}")
+        return []
 
 def explain_compliance(business_name: str, sector: str, compliance_name: str, compliance_desc: str) -> dict:
     """
